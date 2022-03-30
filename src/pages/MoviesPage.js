@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
-import { Container, Grid, Button, Stack, Pagination } from "@mui/material";
+import { useParams } from "react-router-dom";
+import { Container, Grid, Button, Stack, Pagination, FormHelperText } from "@mui/material";
 import { MovieItem } from "../components/MovieItem";
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import FormControl from '@mui/material/FormControl';
+
 
 export function MoviesPage() {
-
+    const [sortBy, setSortBy] = useState("popularity.desc")
     const [movies, setMovies] = useState([])
     const [query, setQuery] = useState("")
     const [pageInfo, setPageInfo] = useState({
@@ -16,12 +22,12 @@ export function MoviesPage() {
     }, [])
 
 
-    function getSearchValue(page = 1) {
+    function getSearchValue({ page = 1, sort = sortBy } = {}) {
         let method = 'discover'
         if (query && query.length > 0) {
             method = 'search'
         }
-        fetch(`https://api.themoviedb.org/3/${method}/movie?api_key=d65708ab6862fb68c7b1f70252b5d91c&language=ru-RU&sort_by=popularity.desc&include_adult=false&include_video=true&page=${page}&with_watch_monetization_types=flatrate&query=${query}`)
+        fetch(`https://api.themoviedb.org/3/${method}/movie?api_key=d65708ab6862fb68c7b1f70252b5d91c&language=ru-RU&sort_by=${sortBy}&include_adult=false&include_video=true&page=${page}&with_watch_monetization_types=flatrate&query=${query}`)
             .then((res) => res.json())
             .then((data) => {
                 setMovies(data.results)
@@ -34,7 +40,28 @@ export function MoviesPage() {
 
     return (
         <Container maxWidth="xl">
+
+
             <div style={{ display: 'flex', alignItems: 'center' }}>
+                <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">Sort By</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={sortBy}
+                        disabled={query || query.length > 0}
+                        onChange={(e) => {
+                            setSortBy(e.target.value);
+                            getSearchValue({ sort: e.target.value })
+                        }}
+                        label="Sort By"
+                        size="small"
+                    >
+                        <MenuItem value="popularity.desc">Popularity</MenuItem>
+                        <MenuItem value="release_date.desc">Release Date</MenuItem>
+                        <MenuItem value="vote_average.desc">Rating</MenuItem>
+                    </Select>
+                </FormControl>
                 <input
                     style={{ marginLeft: 'auto' }}
                     value={query}
