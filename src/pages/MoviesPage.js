@@ -1,29 +1,34 @@
 import { useEffect, useState } from "react";
-import { Container, Grid, Button } from "@mui/material";
+import { Container, Grid, Button, Stack, Pagination } from "@mui/material";
 import { MovieItem } from "../components/MovieItem";
 
 export function MoviesPage() {
+
     const [movies, setMovies] = useState([])
     const [query, setQuery] = useState("")
+    const [pageInfo, setPageInfo] = useState({
+        page: 1,
+        total_pages: 0,
+    })
 
     useEffect(() => {
-        getDefaultValues()
+        getSearchValue()
     }, [])
 
 
-    function getDefaultValues() {
-        fetch(`https://api.themoviedb.org/3/discover/movie?api_key=d65708ab6862fb68c7b1f70252b5d91c&language=ru-RU&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_watch_monetization_types=flatrate`)
+    function getSearchValue(page = 1) {
+        let method = 'discover'
+        if (query && query.length > 0) {
+            method = 'search'
+        }
+        fetch(`https://api.themoviedb.org/3/${method}/movie?api_key=d65708ab6862fb68c7b1f70252b5d91c&language=ru-RU&sort_by=popularity.desc&include_adult=false&include_video=true&page=${page}&with_watch_monetization_types=flatrate&query=${query}`)
             .then((res) => res.json())
             .then((data) => {
                 setMovies(data.results)
-            })
-    }
-
-    function getSearchValue() {
-        fetch(`https://api.themoviedb.org/3/search/movie?api_key=d65708ab6862fb68c7b1f70252b5d91c&language=ru-RU&page=1&include_adult=false&query=${query}`)
-            .then((res) => res.json())
-            .then((data) => {
-                setMovies(data.results)
+                setPageInfo({
+                    page: data.page,
+                    total_pages: Math.min(data.total_pages, 500)
+                })
             })
     }
 
@@ -37,7 +42,7 @@ export function MoviesPage() {
                     placeholder="Type to search"
                 ></input>
 
-                <Button onClick={getSearchValue}>🔍</Button>
+                <Button onClick={() => getSearchValue()}>🔍</Button>
             </div>
             <h1>Movies</h1>
             <Grid container spacing={2}>
@@ -47,6 +52,9 @@ export function MoviesPage() {
                     </Grid>
                 ))}
             </Grid>
+            <Stack spacing={2}>
+                <Pagination count={pageInfo.total_pages} page={pageInfo.page} onChange={(event, value) => getSearchValue(value)} color="primary" />
+            </Stack>
         </Container >
     )
 }
