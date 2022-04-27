@@ -33,7 +33,7 @@ export const Navbar = () => {
                             Rick & Morty
                         </Button>
                         <Button
-                            onClick={() => navigate('/signIn')}
+                            onClick={() => navigate('/signin')}
                             sx={{my: 2, color: 'white', display: 'block'}}
                         >
                             Sign In
@@ -45,7 +45,7 @@ export const Navbar = () => {
                             Counter
                         </Button>
                         <Button
-                            onClick={() => navigate('/toDo')}
+                            onClick={() => navigate('/todo')}
                             sx={{my: 2, color: 'white', display: 'block'}}
                         >
                             ToDo
