@@ -11,7 +11,7 @@ import {useNavigate} from 'react-router-dom'
 import {useContext} from "react";
 import {Auth} from "../context/Auth";
 
-export const Navbar = () => {
+export const NavBar = () => {
     const navigate = useNavigate()
     const {token} = useContext(Auth)
 
