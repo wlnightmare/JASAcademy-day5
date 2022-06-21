@@ -13,7 +13,7 @@ export function ShopPage() {
     useEffect(() => {
         dispatch(fetchProducts())
     }, [dispatch])
-
+  
     const handleAddToBasket = useCallback((product) => {
         dispatch(addToBasket(product))
     }, [dispatch])
@@ -28,7 +28,7 @@ export function ShopPage() {
                         onAddToBasket={() => handleAddToBasket(product)} />
                     </Grid>
                 ))}
-            </Grid>
+            </Grid> 
             <Basket />
             <OrderFormModal /> 
         </Container>
